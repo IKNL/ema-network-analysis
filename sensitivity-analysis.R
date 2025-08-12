@@ -2,7 +2,7 @@
 # author: Kim P.C. van der Sanden
 # date: 12/08/2025
 
-# pkgs
+# Load required packages
 library(dplyr)
 library(mice)
 library(imputeTS)
@@ -336,4 +336,5 @@ dev.off()
 pdf(file_out_pdf("temporal"), width = 12, height = 9)
 replayPlot(grid_plot_temp)
 dev.off()
+
 
