@@ -1,4 +1,6 @@
 # sensitivity-analysis.R
+# author: Kim P.C. van der Sanden
+# date: 12/08/2025
 
 # pkgs
 library(dplyr)
@@ -334,3 +336,4 @@ dev.off()
 pdf(file_out_pdf("temporal"), width = 12, height = 9)
 replayPlot(grid_plot_temp)
 dev.off()
+
