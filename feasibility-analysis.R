@@ -1,4 +1,6 @@
 # feasibility-analysis.R
+# author: Kim P.C. van der Sanden
+# date: 12/08/2025
 
 # Load required packages
 library(dplyr)    # For data manipulation
@@ -162,4 +164,5 @@ p <- ggplot(daily_compliance, aes(x = Daynumber, y = factor(anon_label, levels =
     panel.grid.minor = element_blank()
   )
 print(p)
+
 
