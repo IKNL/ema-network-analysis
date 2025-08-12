@@ -17,6 +17,8 @@ Code used for article
 
 This repository contains the code related to the **1) sensitivity analysis, 2) feasibility analysis, 3) main analysis,** and **4) network comparisons**. 
 
+All code is written by the first author.
+
 ---
 ### Requirements
 ```r
@@ -93,4 +95,5 @@ The script's output from the `mlVAR_GC` function includes the raw differences in
 If you use this code or analysis in your own work, please cite this repository or reference it as part of the appendix of any version of the paper, if available, the published version.
 
 > **Van der Sanden, K. (2025), Schellekens, M., Mols, F., van Deun, K., van der Lee, M., ... de Rooij, B. (2025).** _Ecological momentary assessment in patients with lung and renal cell cancer: feasibility and dynamic networks of fatigue, affect, and pain._ Manuscript in preparation. 
+
 
