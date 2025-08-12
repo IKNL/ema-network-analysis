@@ -1,4 +1,6 @@
 # network-comparisons.R
+# author: Kim P.C. van der Sanden
+# date: 12/08/2025
 
 # Load required packages
 library(dplyr)
@@ -85,3 +87,4 @@ contemp_sig_pvals
 # [5,][,2] 0.049 (NeAf_sqrt  <->   ConR)
 
 # Observed differences could just be due to chance! Underpowered samples etc.
+
