@@ -1,4 +1,6 @@
 # main-analysis.R
+# author: Kim P.C. van der Sanden
+# date: 12/08/2025
 
 # Load required packages
 library(tidyr)
@@ -455,3 +457,4 @@ histogram_plot <- ggplot(df, aes(x = Correlation)) +
 
 # Save plot
 ggsave("figures/centrality_stability_histograms.png", histogram_plot, width = 12, height = 4)
+
