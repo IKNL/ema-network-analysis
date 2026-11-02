@@ -1,6 +1,4 @@
 # main-analysis.R
-# author: Kim P.C. van der Sanden
-# date: 12/08/2025
 
 # Load required packages
 library(tidyr)
@@ -8,26 +6,25 @@ library(dplyr)
 library(mlVAR)
 library(qgraph)
 library(ggplot2)
-library(mnet)
 
 #-------------------------------------------------------------------------------
 # Main analysis
 #-------------------------------------------------------------------------------
 # mlVAR modeling
 # Using the imputed dataset with the following combination:
-# Kalman filtering applied to participants with at least 75% compliance
+# Kalman filtering applied to participants with at least 75% compliance (klmn_v3_75sqrt.rds)
 
 # Nodes:
-# Fat = Phyiscal fatigue
+# Fat = Physical fatigue
 # ConR = Concentration problems (reverse coded)
-# TdoR = Motivation problems (to do fun things, reverse-coded)
+# TdoR = Reduced motivation to do enjoyable activities ("I feel like doing fun things", reverse-coded)
 # PoAf = Positive affect (aggregate of I feel happy / relaxed / satisfied)
-# NeAf_sqrt = sqrt transformed negative affect (frustrated, anxious, gloomy)
-# Pain_sqrt = sqrt transformed pain
-# PA = Physical activity (retrospective phrasing)
+# NeAf_sqrt = Negative affect (frustrated, anxious, gloomy, square root transformed)
+# Pain_sqrt = Pain (square root transformed) 
+# PA = Physical activity (retrospective phrasing!)
 
 # Load imputed dataset
-data <- readRDS("path/to/dataset.rds")
+data <- readRDS('path/to/klmn_v3_75sqrt.rds')
 
 # Define variable sets for different network analyses:
 # - vars_temp: Used to estimate the temporal network (excludes PA)
@@ -44,6 +41,10 @@ data %>%
     names_to = c("Variable", ".value"),
     names_pattern = "^([^_]+(?:_[^_]+)*)_(mean|sd)$"
   )
+
+# mlVAR idvar: create subjno from label if it does not exist yet.
+# Participants are numbered 1..N in the order they appear in the data (first label becomes 1, etc.)
+if (!"subjno" %in% names(data)) data$subjno <- match(data$label, unique(data$label))
 
 # --------- Network estimation with mlVAR for contemp and temp networks --------
 # Estimate contemporaneous network
@@ -320,7 +321,7 @@ t_out_strength <- matrix(ncol = n_nodes)
 
 # Bootstrapping loop
 set.seed(123)
-n_iterations <- 100
+n_iterations <- 1000
 all_ids <- unique(data$subjno)
 sample_size <- floor(length(all_ids) * 0.8)
 counter <- 0
@@ -387,7 +388,7 @@ c_strength <- matrix(ncol = n_nodes)
 # Bootstrapping loop
 set.seed(123)
 counter <- 0
-n_iterations <- 100
+n_iterations <- 1000
 all_ids <- unique(data$subjno)
 sample_size <- floor(length(all_ids) * 0.8)
 
@@ -455,6 +456,4 @@ histogram_plot <- ggplot(df, aes(x = Correlation)) +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
   theme(strip.text = element_text(size = 10))
 
-# Save plot
-ggsave("figures/centrality_stability_histograms.png", histogram_plot, width = 12, height = 4)
-
+# ggsave("figures/centrality_stability_histograms.png", histogram_plot, width = 12, height = 4)

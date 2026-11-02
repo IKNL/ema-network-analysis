@@ -1,6 +1,4 @@
 # feasibility-analysis.R
-# author: Kim P.C. van der Sanden
-# date: 12/08/2025
 
 # Load required packages
 library(dplyr)    # For data manipulation
@@ -142,7 +140,7 @@ p <- ggplot(daily_compliance, aes(x = Daynumber, y = factor(anon_label, levels =
     breaks = 1:21,
     labels = ifelse(1:21 %in% c(1,5,10,15,20), 1:21, "")
   ) +
-  # Customize y-axis to use anonymous labels instead of the sensitive participant labels
+  # Customize y-axis to show sensitive participant labels
   scale_y_discrete(
     breaks = anon_levels,
     labels = ifelse(anon_levels %in% c("P1", "P5", "P10", "P15", "P20", "P25", "P30", "P35", "P40", "P46"), anon_levels, ""),
@@ -164,5 +162,3 @@ p <- ggplot(daily_compliance, aes(x = Daynumber, y = factor(anon_label, levels =
     panel.grid.minor = element_blank()
   )
 print(p)
-
-

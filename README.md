@@ -5,7 +5,6 @@
 ![mlVAR version](https://img.shields.io/badge/mlVAR-version_0.5.2-276DC3?logo=r)
 ![qgraph version](https://img.shields.io/badge/qgraph-version_1.9.8-276DC3?logo=r)
 ![ggplot2 version](https://img.shields.io/badge/ggplot2-version_3.5.2-276DC3?logo=r)
-![mnet version](https://img.shields.io/badge/mnet-version_0.1.4-276DC3?logo=r)
 ![mice version](https://img.shields.io/badge/mice-version_3.17.0-276DC3?logo=r)
 ![imputeTS version](https://img.shields.io/badge/imputeTS-version_3.3-276DC3?logo=r)
 
@@ -15,9 +14,7 @@
 Code used for article
 *"Ecological momentary assessment in patients with lung and renal cell cancer: feasibility and dynamic networks of fatigue, affect, and pain"*
 
-This repository contains the code related to the **1) sensitivity analysis, 2) feasibility analysis, 3) main analysis,** and **4) network comparisons**. 
-
-All code is written by the first author.
+This repository contains the code related to the **1) sensitivity analysis, 2) feasibility analysis, 3) main analysis,** and **4) lag comparison**. 
 
 ---
 ### Requirements
@@ -28,7 +25,6 @@ library(dplyr)     # for data manipulation
 library(mlVAR)     # for multilevel vector autoregression
 library(qgraph)    # for visualizing network structures
 library(ggplot2)   # for plotting
-library(mnet)      # install_github("jmbh/mnet"), for network comparison
 library(mice)      # for multilevel mice
 library(imputeTS)  # for time-series imputation, specifically Kalman filtering
 ```
@@ -69,31 +65,20 @@ The script then visualizes these three networks using the `qgraph` package, defi
 
 The second part focuses on **centrality analysis**. The script calculates the `strength` centrality for the contemporaneous network and `in-strength` and `out-strength` for the temporal networks. It then uses `ggplot2` to create two plots: one showing the strength of each node in the contemporaneous network and another comparing the in- and out-strength of the lag-1 and lag-2 temporal networks.
 
-The final and most complex part is the **stability analysis**. A case-drop bootstrapping procedure (as suggested by [10.3758/s13428-017-0862-1](10.3758/s13428-017-0862-1) and as seen in [10.1016/j.schres.2019.10.055](10.1016/j.schres.2019.10.055)) is implemented to test the robustness of the centrality measures. For mlVAR models, the `bootnet` package doesn't seem to support bootstrapping directly within `mlVAR()` objects. However, the script contains a workaround pipeline, adapted to case-dropping subset bootstraps for mlVAR networks. For both the temporal and contemporaneous networks, the script runs 100 iterations. In each iteration, it randomly resamples 80% of the participants, fits a new mlVAR model, and calculates the centrality indices. The Spearman correlation between the bootstrapped centrality values and the full model's centrality values is computed. These correlations are then visualized in a series of histograms to show the stability distribution, providing a quantifiable measure of confidence in the network structures.
+The final and most complex part is the **stability analysis**. A case-drop bootstrapping procedure (as suggested by [10.3758/s13428-017-0862-1](10.3758/s13428-017-0862-1) is implemented to test the robustness of the centrality measures. For mlVAR models, the `bootnet` package doesn't seem to support bootstrapping directly within `mlVAR()` objects. However, the script contains a workaround pipeline, adapted to case-dropping subset bootstraps for mlVAR networks. For both the temporal and contemporaneous networks, the script runs 1,000 iterations. In each iteration, it randomly resamples 80% of the participants, fits a new mlVAR model, and calculates the centrality indices. The Spearman correlation between the bootstrapped centrality values and the full model's centrality values is computed. These correlations are then visualized in a series of histograms to show the stability distribution, providing a quantifiable measure of confidence in the network structures.
 
 ---
 
 ## 4. `network-comparisons.R`
-**Summary**: This script performs two network comparisons: 
-1. Evaluate whether a temporal network with a lag of 2 provides a significantly better fit than a network with a lag of 1.
-2. Compare the network structures between two distinct patient groups (lung cancer vs. renal cell cancer). 
-The lag comparison is done using the `mlVARcompare` function, which contrasts model fit statistics like AIC and BIC.
-The group comparison is conducted using the `mlVAR_GC` function, which performs a permutation test to identify statistically significant differences in both temporal and contemporaneous network connections between the two patient cohorts. Note that these findings may be underpowered.
+**Summary**: This script compares the fit of a temporal network with a lag of 2 against a temporal network with a lag of 1, using the `mlVARcompare` function, which contrasts model fit statistics such as AIC and BIC.
 
 ### Overview
-The script is divided into two main sections for network comparison.
-
-The first section compares the fit of a lag-1 temporal network against a lag-2 temporal network using the `mlVARcompare` function. This function compares the AIC and BIC for each model, variable by variable, to determine which one provides a better balance of complexity and goodness-of-fit. The output is a summary of which model is "best" based on these criteria.
-
-The second section focuses on comparing network structures between two groups: patients with lung cancer and patients with renal cell cancer (RCC). The script first loads the dataset and summarizes the number of participants and observations in each group. The core of this analysis uses the `mlVAR_GC` function, which is specifically designed for group-level comparisons of mlVAR models. This function employs a permutation test to evaluate if the observed differences in network parameters (both temporal and contemporaneous) between the two groups are statistically significant. The script is configured to run 1,000 permutations to ensure stable p-values which took about 50 minutes.
-
-The script's output from the `mlVAR_GC` function includes the raw differences in network parameters between the groups (`gc$EmpDiffs`) and the corresponding p-values (`gc$Pval`). The script specifically highlights the significant findings by filtering for p-values less than 0.05. It identifies one significant difference in the temporal network (the effect of `PoAf` on `NeAf_sqrt`) and two significant differences in the contemporaneous network (the connections between `TdoR` and `ConR`, and `NeAf_sqrt` and `ConR`). The script concludes with a cautionary note that the observed differences might be a result of chance due to potentially underpowered samples.
+The script compares the fit of a lag-1 temporal network against a lag-2 temporal network using the `mlVARcompare` function. This function compares the AIC and BIC for each model, variable by variable, to determine which one provides a better balance of complexity and goodness-of-fit. The output is a summary of which model is "best" based on these criteria. The script uses the objects `mlvar_temp` and `mlvar_temp2` created in `main-analysis.R`.
 
 ---
 
 ### Citation
 If you use this code or analysis in your own work, please cite this repository or reference it as part of the appendix of any version of the paper, if available, the published version.
 
-> **Van der Sanden, K. (2025), Schellekens, M., Mols, F., van Deun, K., van der Lee, M., ... de Rooij, B. (2025).** _Ecological momentary assessment in patients with lung and renal cell cancer: feasibility and dynamic networks of fatigue, affect, and pain._ Manuscript in preparation. 
-
+> **Van der Sanden, K. (2025), Schellekens, M., Mols, F., van Deun, K., van der Lee, M., ... de Rooij, B. (2025).** _Ecological momentary assessment in patients with lung and renal cell cancer: feasibility and dynamic networks of fatigue, affect, and pain._ Manuscript under review. 
 
